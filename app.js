@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 var appRoutes = require('./routes/app');
 var userRoutes = require('./routes/user');
 var loginRoutes = require('./routes/login');
+var hospitalRoutes = require('./routes/hospitalRoutes');
 
 // Conexión base de datos
 mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', ( err, resp ) => {
@@ -25,6 +26,7 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', ( err, resp 
 
 // Rutas
 app.use('/user', userRoutes);
+app.use('/hospital', hospitalRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 
