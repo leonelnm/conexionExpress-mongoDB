@@ -4,7 +4,6 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 var app = express();
 
 var Hospital = require('../models/hospitalModel');
-var User = require('../models/user');
 
 // Obtener todos los hospitales 
 app.get('/', (req, res) => {
@@ -55,7 +54,6 @@ app.post('/', mdAutenticacion.verifyToken, (req, res) => {
 
         });
     });
-
 
 });
 
