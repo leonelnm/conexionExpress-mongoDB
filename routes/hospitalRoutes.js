@@ -8,21 +8,31 @@ var Hospital = require('../models/hospitalModel');
 // Obtener todos los hospitales 
 app.get('/', (req, res) => {
 
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
 
-    Hospital.find({}, (err, hospitals) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'Error al cargar hospitales',
-                errors: err
+    Hospital.find({})
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email')
+        .exec((err, hospitals) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al cargar hospitales',
+                    errors: err
+                });
+            }
+            Hospital.countDocuments({}, (err, count) => {
+                res.status(200).json({
+                    ok: true,
+                    hospitals: hospitals,
+                    count: count
+                });
             });
-        }
 
-        res.status(200).json({
-            ok: true,
-            hospitals: hospitals
+            
         });
-    });
 
 
 });

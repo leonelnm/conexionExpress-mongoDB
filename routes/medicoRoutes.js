@@ -1,28 +1,41 @@
 var express = require('express');
 var mdAutenticacion = require('../middlewares/autenticacion');
 
+var Medico = require('../models/medicoModel');
+var User = require('../models/user');
+
 var app = express();
 
-var Medico = require('../models/medicoModel');
 
 // Obtener todos los medicos 
 app.get('/', (req, res) => {
 
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
 
-    Medico.find({}, (err, medicos) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'Error al cargar medicos',
-                errors: err
+    Medico.find({})
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email', User)
+        .populate('hospital')
+        .exec((err, medicos) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al cargar medicos',
+                    errors: err
+                });
+            }
+
+            Medico.countDocuments({}, (err, count) => {
+                res.status(200).json({
+                    ok: true,
+                    medicos: medicos,
+                    count: count
+                });
             });
-        }
-
-        res.status(200).json({
-            ok: true,
-            medicos: medicos
+            
         });
-    });
 
 
 });

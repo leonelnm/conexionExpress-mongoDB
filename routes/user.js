@@ -10,7 +10,12 @@ var User = require('../models/user');
 // Obtener todos los usuarios
 app.get('/', (req, res, next) => {
 
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+
     User.find({}, 'nombre email img role')
+        .skip(desde)
+        .limit(5)
         .exec((err, users) => {
             if (err) {
                 return res.status(500).json({
@@ -20,10 +25,23 @@ app.get('/', (req, res, next) => {
                 });
             }
 
-            res.status(200).json({
-                ok: true,
-                usuarios: users
+            User.countDocuments({}, (err, count) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando usuarios',
+                        errors: err
+                    });
+                }
+
+                res.status(200).json({
+                    ok: true,
+                    usuarios: users,
+                    count: count
+                });
             });
+
+            
 
         });
 });
@@ -129,13 +147,13 @@ app.delete('/:id', mdAutenticacion.verifyToken, (req, res) => {
             });
         }
 
-        if ( !userDeleted ) {
+        if (!userDeleted) {
             return res.status(400).json({
                 ok: false,
-                mensaje: `El usuario ${ id } no existe`,
-                errors: { message: `El usuario ${id} no existe`}
+                mensaje: `El usuario ${id} no existe`,
+                errors: { message: `El usuario ${id} no existe` }
             });
-            
+
         }
 
         res.status(200).json({
