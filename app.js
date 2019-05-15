@@ -22,11 +22,10 @@ var uploadRoutes = require('./routes/uploadRoutes');
 var imgRoutes = require('./routes/imgRoutes');
 
 // Conexión base de datos
-mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', ( err, resp ) => {
-    if ( err ) throw err;
-
+mongoose.connect('mongodb://localhost:27017/hospitalDB', { useNewUrlParser: true}, (err) => {
+    if (err) throw err;
     console.log('Base de datos: \x1b[32m%s\x1b[0m', 'online');
-} );
+});
 
 
 // Server-index-config
